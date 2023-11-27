@@ -1,5 +1,5 @@
 # CoOpt3
-This repo contains how to implement Jetpack Compose.
+This repo contains how to implement Jetpack Compose with Firebase Realtime Database.
 
 # Visual
 | LazyGrid | LazyColumn |
