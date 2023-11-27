@@ -46,14 +46,14 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalFoundationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        val items = (1 .. 100).map {
-//            ListItem(
-//                height = Random.nextInt(100, 300).dp,
-//                color = Color(
-//                    Random.nextLong(0xFFFFFFFF)
-//                ).copy(1f)
-//            )
-//        }
+        val items = (1 .. 100).map {
+            ListItem(
+                height = Random.nextInt(100, 300).dp,
+                color = Color(
+                    Random.nextLong(0xFFFFFFFF)
+                ).copy(1f)
+            )
+        }
         setContent {
             CoOpt3Theme {
                 Column {
@@ -64,17 +64,17 @@ class MainActivity : ComponentActivity() {
                     )
                     SetData(viewModel)
                 }
-//                LazyVerticalStaggeredGrid(
-//                    columns = StaggeredGridCells.Adaptive(150.dp),
-//                    modifier = Modifier.fillMaxSize(),
-//                    contentPadding = PaddingValues(16.dp),
-//                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-//                    verticalItemSpacing = 16.dp
-//                ) {
-//                    items(items) {item ->
-//                        RandomColorBox(item = item)
-//                    }
-//                }
+                LazyVerticalStaggeredGrid(
+                    columns = StaggeredGridCells.Adaptive(150.dp),
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalItemSpacing = 16.dp
+                ) {
+                    items(items) {item ->
+                        RandomColorBox(item = item)
+                    }
+                }
             }
         }
     }
