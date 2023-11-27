@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "146741054338",
+    "project_id": "coopt3-2358a",
+    "storage_bucket": "coopt3-2358a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:146741054338:android:439f0ff3131fd8f7389d9b",
+        "android_client_info": {
+          "package_name": "com.example.coopt3"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDkPKQcFV-LL2JpHPAeaaY9euqB2XkGXKI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
