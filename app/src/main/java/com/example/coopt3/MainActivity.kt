@@ -1,5 +1,3 @@
-package com.example.coopt3
-
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -7,14 +5,7 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
@@ -31,48 +22,63 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import coil.compose.rememberImagePainter
 import com.example.coopt3.models.Music
 import com.example.coopt3.sealed.DataState
 import com.example.coopt3.ui.theme.CoOpt3Theme
-import com.example.coopt3.viewmodels.MainViewModel
-import coil.compose.rememberImagePainter
 import com.example.coopt3.ui.theme.gray_fade
-import kotlin.random.Random;
+import com.example.coopt3.viewmodels.MainViewModel
+import kotlin.random.Random
 
 @OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity() {
 
-    val viewModel : MainViewModel by viewModels()
+    val viewModel: MainViewModel by viewModels()
+
     @OptIn(ExperimentalFoundationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val items = (1 .. 100).map {
+        val items = (1..100).map {
             ListItem(
                 height = Random.nextInt(100, 300).dp,
-                color = Color(
-                    Random.nextLong(0xFFFFFFFF)
-                ).copy(1f)
+                color = Color(Random.nextLong(0xFFFFFFFF)).copy(1f)
             )
         }
         setContent {
             CoOpt3Theme {
+                // Create a NavHostController
+                val navController = rememberNavController()
+
+                // Set up the navigation graph using NavHost
+                NavHost(navController = navController, startDestination = "main") {
+                    composable("main") {
+                        MainScreen(navController, viewModel)
+                    }
+                    composable("staggeredGrid") {
+                        StaggeredGridScreen(items)
+                    }
+                }
+
+                // Top level layout
                 Column {
-                    TopAppBar (
+                    TopAppBar(
                         title = {
                             Text(text = "Liked Music in 2023")
                         },
                     )
-                    SetData(viewModel)
-                }
-                LazyVerticalStaggeredGrid(
-                    columns = StaggeredGridCells.Adaptive(150.dp),
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    verticalItemSpacing = 16.dp
-                ) {
-                    items(items) {item ->
-                        RandomColorBox(item = item)
+
+                    // NavHost to navigate between screens
+                    NavHost(navController = navController, startDestination = "main") {
+                        composable("main") {
+                            MainScreen(navController, viewModel)
+                        }
+                        composable("staggeredGrid") {
+                            StaggeredGridScreen(items)
+                        }
                     }
                 }
             }
@@ -80,7 +86,31 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    fun SetData(viewModel: MainViewModel) {
+    fun MainScreen(navController: NavHostController, viewModel: MainViewModel) {
+        Column {
+            // Content specific to the MainScreen
+            SetData(viewModel, navController)
+        }
+    }
+
+    @OptIn(ExperimentalFoundationApi::class)
+    @Composable
+    fun StaggeredGridScreen(items: List<ListItem>) {
+        LazyVerticalStaggeredGrid(
+            columns = StaggeredGridCells.Adaptive(150.dp),
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalItemSpacing = 16.dp
+        ) {
+            items(items) { item ->
+                RandomColorBox(item = item)
+            }
+        }
+    }
+
+    @Composable
+    fun SetData(viewModel: MainViewModel, navController: NavHostController) {
         when (val result = viewModel.response.value) {
             is DataState.Loading -> {
                 Box(
@@ -127,7 +157,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    @OptIn(coil.annotation.ExperimentalCoilApi::class)
     @Composable
     fun CardItem(music: Music) {
         Card(
@@ -137,7 +166,8 @@ class MainActivity : ComponentActivity() {
                 .padding(10.dp)
         ) {
             Box(
-                modifier = Modifier.fillMaxSize()) {
+                modifier = Modifier.fillMaxSize()
+            ) {
                 Image(
                     painter = rememberImagePainter(music.Image),
                     modifier = Modifier.fillMaxSize(),
@@ -157,18 +187,18 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-}
 
-data class ListItem(
-    val height: Dp,
-    val color: Color
-)
+    data class ListItem(
+        val height: Dp,
+        val color: Color
+    )
 
-@Composable
-fun RandomColorBox(item: ListItem) {
-    Box(modifier = Modifier
-        .fillMaxWidth()
-        .height(item.height)
-        .clip(RoundedCornerShape(10.dp))
-        .background(item.color))
+    @Composable
+    fun RandomColorBox(item: ListItem) {
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .height(item.height)
+            .clip(RoundedCornerShape(10.dp))
+            .background(item.color))
+    }
 }
