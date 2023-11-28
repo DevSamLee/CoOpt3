@@ -41,29 +41,21 @@ class MainActivity : ComponentActivity() {
 
     val viewModel: MainViewModel by viewModels()
 
+    val items = (1..100).map {
+        ListItem(
+            height = Random.nextInt(100, 300).dp,
+            color = Color(Random.nextLong(0xFFFFFFFF)).copy(1f)
+        )
+    }
+
     @OptIn(ExperimentalFoundationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val items = (1..100).map {
-            ListItem(
-                height = Random.nextInt(100, 300).dp,
-                color = Color(Random.nextLong(0xFFFFFFFF)).copy(1f)
-            )
-        }
+
         setContent {
             CoOpt3Theme {
                 // Create a NavHostController
                 val navController = rememberNavController()
-
-                // Set up the navigation graph using NavHost
-                NavHost(navController = navController, startDestination = "main") {
-                    composable("main") {
-                        MainScreen(navController, viewModel)
-                    }
-                    composable("staggeredGrid") {
-                        StaggeredGridScreen(items)
-                    }
-                }
 
                 // Top level layout
                 Column {
@@ -79,7 +71,7 @@ class MainActivity : ComponentActivity() {
                             MainScreen(navController, viewModel)
                         }
                         composable("staggeredGrid") {
-                            StaggeredGridScreen(items)
+                            StaggeredGridScreen(navController, items)
                         }
                     }
                 }
@@ -90,23 +82,40 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun MainScreen(navController: NavHostController, viewModel: MainViewModel) {
         Column {
-            // Content specific to the MainScreen
+            Button(
+                onClick = { navController.navigate("staggeredGrid") },
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Text("Go to Staggered Grid Screen")
+            }
+
             SetData(viewModel, navController)
+
+
         }
     }
 
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
-    fun StaggeredGridScreen(items: List<ListItem>) {
-        LazyVerticalStaggeredGrid(
-            columns = StaggeredGridCells.Adaptive(150.dp),
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalItemSpacing = 16.dp
-        ) {
-            items(items) { item ->
-                RandomColorBox(item = item)
+    fun StaggeredGridScreen(navController: NavHostController, items: List<ListItem>) {
+        Column {
+            Button(
+                onClick = { navController.navigate("main") },
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Text("Go to Main Screen")
+            }
+
+            LazyVerticalStaggeredGrid(
+                columns = StaggeredGridCells.Adaptive(150.dp),
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalItemSpacing = 16.dp
+            ) {
+                items(items) { item ->
+                    RandomColorBox(item = item)
+                }
             }
         }
     }
