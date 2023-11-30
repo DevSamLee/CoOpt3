@@ -36,6 +36,18 @@ import com.example.coopt3.ui.theme.gray_fade
 import com.example.coopt3.viewmodels.MainViewModel
 import kotlin.random.Random
 
+//Refactored you viewModels. You do not have to pass them down as params. Already set at the top level.
+
+//Another option to use ViewModel is to assign it to a local variable in your local functions.
+//This will also allow you to use several viewModels
+
+//Code
+// implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
+
+// val localviewModel = viewModel{ MainViewModel}
+// Text(localviewModel.variable)
+// localviewModel.function()
+// That will give you access to that viewmodel's variables and functions
 @OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity() {
 
@@ -58,7 +70,7 @@ class MainActivity : ComponentActivity() {
                 // Set up the navigation graph using NavHost
                 NavHost(navController = navController, startDestination = "main") {
                     composable("main") {
-                        MainScreen(navController, viewModel)
+                        MainScreen(navController)
                     }
                     composable("staggeredGrid") {
                         StaggeredGridScreen(items)
@@ -76,7 +88,7 @@ class MainActivity : ComponentActivity() {
                     // NavHost to navigate between screens
                     NavHost(navController = navController, startDestination = "main") {
                         composable("main") {
-                            MainScreen(navController, viewModel)
+                            MainScreen(navController)
                         }
                         composable("staggeredGrid") {
                             StaggeredGridScreen(items)
@@ -88,10 +100,10 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    fun MainScreen(navController: NavHostController, viewModel: MainViewModel) {
+    fun MainScreen(navController: NavHostController) {
         Column {
             // Content specific to the MainScreen
-            SetData(viewModel, navController)
+            SetData(navController)
         }
     }
 
@@ -112,7 +124,7 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    fun SetData(viewModel: MainViewModel, navController: NavHostController) {
+    fun SetData( navController: NavHostController) {
         when (val result = viewModel.response.value) {
             is DataState.Loading -> {
                 Box(
